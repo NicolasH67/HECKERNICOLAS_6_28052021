@@ -2,6 +2,7 @@ const fs = require('fs');
 
 const Sauce = require("../models/sauce");
 
+// function to create a sauce
 exports.createSauce = (req, res, next) => {
   const sauceObjet = JSON.parse(req.body.sauce);
   const sauce = new Sauce({
@@ -20,7 +21,7 @@ exports.createSauce = (req, res, next) => {
     });
 };
 
-
+// function to recover all the sauces
 exports.getAllSauces = (req, res, next) => {
   Sauce.find()
   .then((sauces) => {
@@ -33,6 +34,7 @@ exports.getAllSauces = (req, res, next) => {
   });
 };
 
+// function to recover one sauce
 exports.getOneSauce = (req, res, next) => {
   Sauce.findOne({
     _id: req.params.id,
@@ -47,6 +49,7 @@ exports.getOneSauce = (req, res, next) => {
   });
 };
 
+// function to modify a sauce
 exports.update = (req, res, next) => {
   const sauceObject = req.file ?
     {
@@ -59,7 +62,7 @@ exports.update = (req, res, next) => {
         const filename = sauce.imageUrl.split('/images/')[1];
         fs.unlink(`images/${filename}`, () => {
           Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
-            .then(() => { res.status(200).json({ message: 'Sauce mise à jour!' }); })
+            .then(() => { res.status(200).json({ message: 'updated sauce' }); })
             .catch((error) => { res.status(400).json({ error }); });
         })
       })
@@ -67,24 +70,26 @@ exports.update = (req, res, next) => {
 
   } else {
     Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
-      .then(() => res.status(200).json({ message: 'Sauce mise à jour!' }))
+      .then(() => res.status(200).json({ message: 'updated sauce' }))
       .catch((error) => res.status(400).json({ error }));
   }
 };
 
+// function ot delete a sauce
 exports.delete = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
   .then(sauce => {
     const filename = sauce.imageUrl.split('/images/')[1];
     fs.unlink(`images/${filename}`, () => {
       Sauce.deleteOne({ _id: req.params.id })
-      .then(() => res.status(200).json({ message: 'Objet supprimé !' }))
+      .then(() => res.status(200).json({ message: 'Deleted object' }))
       .catch(error => res.status(400).json({ error }));
     });
   })
   .catch(error => res.status(500).json({ error }));
 };
 
+// like and dislike management 
 exports.likeSauce = (req, res, next) => {
   switch (req.body.like) {
     case 0:
@@ -96,7 +101,7 @@ exports.likeSauce = (req, res, next) => {
             $pull: { usersLiked: req.body.userId },
             _id: req.params.id
           })
-          .then(() => { res.status(201).json({ message: 'Ton avis a été pris en compte!' }); })
+          .then(() => { res.status(201).json({ message: 'Your opinion has been taken into account' }); })
           .catch((error) => { res.status(400).json({ error: error }); });
           
         } if (sauce.usersDisliked.find(user => user === req.body.userId)) {
@@ -105,7 +110,7 @@ exports.likeSauce = (req, res, next) => {
             $pull: { usersDisliked: req.body.userId },
             _id: req.params.id
           })
-          .then(() => { res.status(201).json({ message: 'Ton avis a été pris en compte!' }); })
+          .then(() => { res.status(201).json({ message: 'Your opinion has been taken into account' }); })
           .catch((error) => { res.status(400).json({ error: error }); });
         }
       })
@@ -117,7 +122,7 @@ exports.likeSauce = (req, res, next) => {
           $push: { usersLiked: req.body.userId },
           _id: req.params.id
         })
-        .then(() => { res.status(201).json({ message: 'Ton like a été pris en compte!' }); })
+        .then(() => { res.status(201).json({ message: 'Your opinion has been taken into account' }); })
         .catch((error) => { res.status(400).json({ error: error }); });
         break;
         case -1:
@@ -126,10 +131,9 @@ exports.likeSauce = (req, res, next) => {
             $push: { usersDisliked: req.body.userId },
             _id: req.params.id
           })
-          .then(() => { res.status(201).json({ message: 'Ton dislike a été pris en compte!' }); })
+          .then(() => { res.status(201).json({ message: 'Your opinion has been taken into account' }); })
           .catch((error) => { res.status(400).json({ error: error }); });
           break;
-          default:
-            console.error('not today : mauvaise requête');
+          default: console.error('not today : mauvaise requête');
   }
 };
