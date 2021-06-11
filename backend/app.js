@@ -8,12 +8,10 @@ const app = express();
 
 const userRoutes = require("./routes/user");
 const sauceRoutes = require("./routes/sauce");
+const authMongoose = require("./middleware/authMongoose")
 
-mongoose
-  .connect(
-    "mongodb+srv://admin:tGp54eaXaqgsKk5A@so-pockockobdd.dp9nk.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
+
+mongoose.connect(authMongoose)
   .then(() => console.log("Connection to MongoDB successful !"))
   .catch(() => console.log("Connection to MongoDB failed !"));
 
