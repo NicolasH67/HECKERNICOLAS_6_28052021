@@ -1,8 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const helmet = require("helmet")
-
+const helmet = require("helmet");
+const dotenv = require('dotenv').config();
 const path = require("path");
 
 const app = express();
@@ -11,9 +11,8 @@ app.use(helmet());
 
 const userRoutes = require("./routes/user");
 const sauceRoutes = require("./routes/sauce");
-const password = require("./middleware/password")
 
-mongoose.connect(`mongodb+srv://So_pokocko:s8YbqjwVLAfrzhzj@so-pockockobdd.dp9nk.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
+mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@so-pockockobdd.dp9nk.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
 { 
   useNewUrlParser: true, 
   useUnifiedTopology: true 
